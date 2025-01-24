@@ -1,24 +1,35 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+const boardSize = 6;  // 6x6のボード
+const colors = ['#ff6666', '#ffcc66', '#66ff66', '#66ccff', '#ff66cc'];  // 色の種類
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+const gameBoard = document.getElementById('game-board');
+let board = [];
 
-setupCounter(document.querySelector('#counter'))
+// ゲームボードの初期化
+function initializeBoard() {
+    board = [];
+    gameBoard.innerHTML = '';  // ボードをクリア
+
+    for (let i = 0; i < boardSize; i++) {
+        const row = [];
+        for (let j = 0; j < boardSize; j++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            cell.style.backgroundColor = color;
+            cell.addEventListener('click', () => handleCellClick(i, j, color));
+
+            row.push({ element: cell, color });
+            gameBoard.appendChild(cell);
+        }
+        board.push(row);
+    }
+}
+
+// セルがクリックされたときの処理
+function handleCellClick(row, col, color) {
+    alert(`セルがクリックされました！ 色: ${color}`);
+    // ここで同じ色のツムを消すロジックを追加できます
+}
+
+// ゲーム開始
+initializeBoard();
