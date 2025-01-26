@@ -1,13 +1,30 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>簡単なツムツム風ゲーム</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div id="game-board"></div>
-    <script src="script.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>スケジュール管理アプリ</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <h1>スケジュール管理アプリ</h1>
+
+      <!-- スケジュール追加フォーム -->
+      <div id="add-schedule">
+        <input
+          type="text"
+          id="schedule-title"
+          placeholder="予定のタイトル"
+        />
+        <input type="date" id="schedule-date" />
+        <button id="add-button">予定を追加</button>
+      </div>
+
+      <!-- 予定リスト -->
+      <ul id="schedule-list"></ul>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>
