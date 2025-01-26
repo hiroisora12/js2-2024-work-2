@@ -1,75 +1,49 @@
+/* ページ全体のスタイル */
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
   margin: 0;
-  padding: 0;
+  overflow: hidden;
+  background-color: #333;
 }
 
-#app {
-  width: 80%;
-  max-width: 600px;
-  margin: 50px auto;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
+/* 得点表示のスタイル */
+#score {
+  position: absolute;
+  top: 20px;
+  left: 20px;
   font-size: 24px;
-  text-align: center;
-}
-
-#add-schedule {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-#add-schedule input {
-  padding: 8px;
-  font-size: 16px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-#add-schedule button {
-  padding: 10px;
-  background-color: #4caf50;
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
 }
 
-#add-schedule button:hover {
-  background-color: #45a049;
+/* タイマー表示のスタイル */
+#timer {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 24px;
+  color: white;
 }
 
-#schedule-list {
-  list-style-type: none;
+/* ランキングのスタイル */
+#ranking {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  font-size: 18px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+#ranking h2 {
+  margin: 0;
+}
+
+#rankingList {
+  list-style: none;
   padding: 0;
 }
 
-#schedule-list li {
-  background-color: #f9f9f9;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 5px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-#schedule-list li button {
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-#schedule-list li button:hover {
-  background-color: #c0392b;
+#rankingList li {
+  margin-bottom: 5px;
 }

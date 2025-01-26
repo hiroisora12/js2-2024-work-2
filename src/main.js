@@ -1,68 +1,111 @@
-// スケジュールの追加
-const addButton = document.getElementById('add-button');
-const titleInput = document.getElementById('schedule-title');
-const dateInput = document.getElementById('schedule-date');
-const scheduleList = document.getElementById('schedule-list');
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const scoreDisplay = document.getElementById('score');
+const timerDisplay = document.getElementById('timer');
+const rankingList = document.getElementById('rankingList');
 
-// スケジュールをローカルストレージに保存する関数
-function saveSchedules(schedules) {
-  localStorage.setItem('schedules', JSON.stringify(schedules));
-}
+let score = 0;
+let timeLeft = 30;
+let gameInterval;
+let circle; // 現在表示されている円
+let intervalTime = 1000; // 初期の円の出現間隔（ミリ秒）
 
-// スケジュールをリストに表示する関数
-function displaySchedules() {
-  const schedules = JSON.parse(localStorage.getItem('schedules')) || [];
-  scheduleList.innerHTML = ''; // 既存のリストをクリア
+// Canvasサイズの設定
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-  schedules.forEach((schedule, index) => {
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <span>${schedule.title} - ${schedule.date}</span>
-      <button class="delete-btn" data-index="${index}">削除</button>
-    `;
-    scheduleList.appendChild(li);
-  });
-
-  // 削除ボタンにイベントリスナーを追加
-  const deleteButtons = document.querySelectorAll('.delete-btn');
-  deleteButtons.forEach(button => {
-    button.addEventListener('click', (event) => {
-      const index = event.target.getAttribute('data-index');
-      deleteSchedule(index);
-    });
-  });
-}
-
-// スケジュールを追加する関数
-function addSchedule() {
-  const title = titleInput.value.trim();
-  const date = dateInput.value.trim();
-
-  if (!title || !date) {
-    alert('予定のタイトルと日付を入力してください');
-    return;
+// 円オブジェクト
+class Circle {
+  constructor() {
+    this.x = Math.random() * canvas.width; // ランダムなx座標
+    this.y = Math.random() * canvas.height; // ランダムなy座標
+    this.radius = 50; // 初期半径50ピクセル
+    this.color = 'red'; // 色を赤に固定
   }
 
-  const schedules = JSON.parse(localStorage.getItem('schedules')) || [];
-  schedules.push({ title, date });
-  saveSchedules(schedules);
-  displaySchedules();
+  // 円を描画
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+  }
 
-  // 入力フィールドをクリア
-  titleInput.value = '';
-  dateInput.value = '';
+  // クリックした位置が円の中か判定
+  isClicked(x, y) {
+    const distance = Math.hypot(x - this.x, y - this.y);
+    return distance < this.radius;
+  }
+
+  // 得点に応じて円の大きさを変更
+  updateSize(score) {
+    // 得点が10増えるごとに円を15ピクセル小さくする
+    this.radius = Math.max(10, 50 - Math.floor(score / 10) * 15); // 最小半径は10
+  }
 }
 
-// スケジュールを削除する関数
-function deleteSchedule(index) {
-  const schedules = JSON.parse(localStorage.getItem('schedules')) || [];
-  schedules.splice(index, 1);  // 指定されたインデックスで削除
-  saveSchedules(schedules);
-  displaySchedules(); // リストを再表示
+// ゲーム開始
+function startGame() {
+  score = 0;
+  timeLeft = 30;
+  scoreDisplay.textContent = `得点: ${score}`;
+  timerDisplay.textContent = `残り時間: ${timeLeft}秒`;
+
+  // 最初の円を生成
+  circle = new Circle();
+
+  // ゲームの更新を一定間隔で呼び出す
+  gameInterval = setInterval(updateGame, intervalTime);
 }
 
-// 初期表示
-displaySchedules();
+// ゲームの更新
+function updateGame() {
+  timeLeft--;
+  timerDisplay.textContent = `残り時間: ${timeLeft}秒`;
 
-// イベントリスナー
-addButton.addEventListener('click', addSchedule);
+  // 背景をクリアして円を描画
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  circle.draw();
+
+  // 得点が10の倍数の時に出現スピードを速くする
+  if (score % 10 === 0 && score > 0) {
+    // 出現スピードを速くする（間隔を短くする）
+    const newIntervalTime = Math.max(200, intervalTime - 100); // 最小間隔200msに設定
+    if (newIntervalTime !== intervalTime) {
+      intervalTime = newIntervalTime;
+      clearInterval(gameInterval); // 既存のインターバルをクリア
+      gameInterval = setInterval(updateGame, intervalTime); // 新しいインターバルで更新
+    }
+  }
+
+  if (timeLeft <= 0) {
+    clearInterval(gameInterval);
+    showRanking();
+  }
+}
+
+// 円がクリックされたかどうかを判定
+canvas.addEventListener('click', (event) => {
+  const { offsetX, offsetY } = event;
+
+  if (circle.isClicked(offsetX, offsetY)) {
+    score++; // 得点を加算
+    scoreDisplay.textContent = `得点: ${score}`;
+
+    // 円の大きさを得点に応じて更新
+    circle.updateSize(score);
+
+    // 新しい円を生成して表示
+    circle = new Circle();
+  }
+});
+
+// ランキングを表示
+function showRanking() {
+  const rankingItem = document.createElement('li');
+  rankingItem.textContent = `あなたの得点: ${score}`;
+  rankingList.appendChild(rankingItem);
+}
+
+// ゲーム開始
+window.onload = startGame;
